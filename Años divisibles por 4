@@ -1,0 +1,10 @@
+import os
+os.system("cls")
+# // PYTHON AL SER UN LENGUAJE INGLES NO PERMITE LA Ñ ENTONCES REPRESENTÉ EL AÑO CON LA VARIABLE "a"
+a = int(input("Ingrese el año: "))
+
+while a <= 2026:
+    print(a)
+    if a % 4 == 0:
+        print(f"El año {a} es divisible por 4")
+    a += 1
