@@ -1,0 +1,15 @@
+import os , time
+os.system ("cls")
+
+n = int(input("Ingrese el número (n) de la tabla de multiplicar: "))
+time.sleep(1)
+os.system ("cls")
+print('''La tabla del numero ingresado es:
+---------------------------------------------------------''')
+
+
+contador = 1
+while contador <= 10:
+    resultado = n * contador
+    print(f"{n} x {contador} = {resultado}")
+    contador += 1
