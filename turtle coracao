@@ -1,0 +1,36 @@
+import turtle
+import time
+
+# Configurar la ventana
+screen = turtle.Screen()
+screen.bgcolor("black")
+screen.title("Corazón con J")
+
+# Crear la tortuga para el corazón
+heart = turtle.Turtle()
+heart.color("red")
+heart.pensize(3)
+heart.speed(2000)  # Dibujo lento para que se vea bonito
+
+# Dibujar el corazón
+heart.begin_fill()
+heart.left(140)
+heart.forward(180)
+heart.circle(-90, 200)
+heart.left(120)
+heart.circle(-90, 200)
+heart.forward(180)
+heart.end_fill()
+heart.hideturtle()
+
+# Crear una tortuga para escribir la letra
+writer = turtle.Turtle()
+writer.color("white")
+writer.penup()
+writer.hideturtle()
+writer.goto(0, -100)  # Posición aproximada del centro del corazón
+writer.write("Fornai", align="center", font=("Bickham", 48, "bold"))
+
+# Esperar 5 segundos antes de cerrar
+time.sleep(5)
+screen.bye()
