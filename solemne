@@ -1,0 +1,254 @@
+# =============================================================
+#   BIENVENIDA NOVATUSS — Sistema de Competencias
+#   Solemne 2 · Taller de Programación I · USS
+# =============================================================
+
+# Librería random: genera números pseudoaleatorios para simular
+# resultados de forma justa. random.randint(a,b) entrega un entero
+# entre a y b (ambos incluidos).
+# Referencia: https://docs.python.org/3/library/random.html
+import random
+
+# Semilla fija → resultados reproducibles para la presentación.
+# Comenta esta línea si quieres resultados distintos cada vez.
+random.seed(42)
+
+
+# =============================================================
+# FUNCIÓN 1: Cargar equipos
+# Retorna dos listas paralelas:
+#   - lista_equipos : nombre de cada equipo
+#   - lista_grupos  : grupo al que pertenece (A o B)
+# Información oficial tomada del calendario del torneo.
+# =============================================================
+def cargar_equipos():
+    lista_equipos = [
+        # --- Grupo A ---
+        "ODONTO",
+        "ING INDUSTRIAL 1",
+        "ING MINAS",
+        "DERECHO 1",
+        # --- Grupo B ---
+        "DERECHO 2",
+        "ING INFORMATICA",
+        "ING INDUSTRIAL 2",
+        "SC ACT FISICA",
+    ]
+
+    lista_grupos = [
+        "Grupo A",
+        "Grupo A",
+        "Grupo A",
+        "Grupo A",
+        "Grupo B",
+        "Grupo B",
+        "Grupo B",
+        "Grupo B",
+    ]
+
+    return lista_equipos, lista_grupos
+
+
+# =============================================================
+# FUNCIÓN 2: Definir el calendario de partidos
+# Retorna una lista de diccionarios, uno por partido.
+# Cada diccionario tiene: local, visita, fecha, hora, grupo
+# Información tomada del calendario oficial del torneo.
+# =============================================================
+def definir_calendario():
+    partidos = [
+        # ── RONDA 1 ──────────────────────────────────────────
+        {"local": "ODONTO",          "visita": "DERECHO 1",      "fecha": "LUN 20-04", "hora": "14:00", "grupo": "Grupo A", "ronda": 1},
+        {"local": "ING INDUSTRIAL 1","visita": "ING MINAS",      "fecha": "JUE 30-04", "hora": "13:00", "grupo": "Grupo A", "ronda": 1},
+        {"local": "DERECHO 2",       "visita": "SC ACT FISICA",  "fecha": "MIE 22-04", "hora": "13:00", "grupo": "Grupo B", "ronda": 1},
+        {"local": "ING INFORMATICA", "visita": "ING INDUSTRIAL 2","fecha": "MAR 21-04", "hora": "14:00", "grupo": "Grupo B", "ronda": 1},
+        # ── RONDA 2 ──────────────────────────────────────────
+        {"local": "ODONTO",          "visita": "ING MINAS",      "fecha": "LUN 27-04", "hora": "14:00", "grupo": "Grupo A", "ronda": 2},
+        {"local": "ING INDUSTRIAL 1","visita": "DERECHO 1",      "fecha": "VIE 24-04", "hora": "13:00", "grupo": "Grupo A", "ronda": 2},
+        {"local": "DERECHO 2",       "visita": "ING INDUSTRIAL 2","fecha": "JUE 23-04", "hora": "14:00", "grupo": "Grupo B", "ronda": 2},
+        {"local": "ING INFORMATICA", "visita": "SC ACT FISICA",  "fecha": "MAR 22-04", "hora": "13:00", "grupo": "Grupo B", "ronda": 2},
+        # ── RONDA 3 ──────────────────────────────────────────
+        {"local": "ODONTO",          "visita": "ING INDUSTRIAL 1","fecha": "JUE 23-04", "hora": "13:00", "grupo": "Grupo A", "ronda": 3},
+        {"local": "ING MINAS",       "visita": "DERECHO 1",      "fecha": "MAR 28-04", "hora": "14:00", "grupo": "Grupo A", "ronda": 3},
+        {"local": "DERECHO 2",       "visita": "ING INFORMATICA","fecha": "MIE 29-04", "hora": "13:00", "grupo": "Grupo B", "ronda": 3},
+        {"local": "ING INDUSTRIAL 2","visita": "SC ACT FISICA",  "fecha": "JUE 30-04", "hora": "14:00", "grupo": "Grupo B", "ronda": 3},
+    ]
+    return partidos
+
+
+# =============================================================
+# FUNCIÓN 3: Simular un partido
+# Genera un puntaje aleatorio (1–10) para cada equipo.
+# Si hay empate, repite hasta que haya ganador.
+# Retorna: (ganador, puntaje_local, puntaje_visita)
+# =============================================================
+def simular_partido(local, visita):
+    pts_local  = random.randint(1, 10)
+    pts_visita = random.randint(1, 10)
+
+    while pts_local == pts_visita:          # No puede haber empate
+        pts_local  = random.randint(1, 10)
+        pts_visita = random.randint(1, 10)
+
+    if pts_local > pts_visita:
+        ganador = local
+    else:
+        ganador = visita
+
+    return ganador, pts_local, pts_visita
+
+
+# =============================================================
+# FUNCIÓN 4: Fase de grupos
+# Simula todos los partidos del calendario por ronda.
+# Clasifica los 2 equipos con más victorias de cada grupo.
+# =============================================================
+def fase_grupos(partidos, equipos, grupos):
+
+    # Tabla de victorias: diccionario {equipo: victorias}
+    victorias = {}
+    for e in equipos:
+        victorias[e] = 0
+
+    ronda_actual = 0
+
+    # Recorremos todos los partidos con un for
+    for p in partidos:
+        if p["ronda"] != ronda_actual:
+            ronda_actual = p["ronda"]
+            print(f"\n{'─'*60}")
+            print(f"  ⚽  RONDA {ronda_actual}")
+            print(f"{'─'*60}")
+
+        ganador, pts_l, pts_v = simular_partido(p["local"], p["visita"])
+        victorias[ganador] += 1
+
+        print(f"  [{p['grupo']}] {p['local']:<18} {pts_l} - {pts_v}  {p['visita']}")
+        print(f"          📅 {p['fecha']}  🕛 {p['hora']}  ✅ Gana: {ganador}")
+
+    # ── Clasificación por grupo ──────────────────────────────
+    print(f"\n{'='*60}")
+    print("  📊 TABLA FINAL DE GRUPOS")
+    print(f"{'='*60}")
+
+    grupos_unicos = []
+    for g in grupos:
+        if g not in grupos_unicos:
+            grupos_unicos.append(g)
+
+    clasificados = []
+
+    for grupo in grupos_unicos:
+        print(f"\n  {grupo}:")
+
+        # Equipos de este grupo
+        eq_grupo = []
+        for i in range(len(equipos)):
+            if grupos[i] == grupo:
+                eq_grupo.append(equipos[i])
+
+        # Ordenar por victorias (burbuja)
+        for i in range(len(eq_grupo) - 1):
+            for j in range(i + 1, len(eq_grupo)):
+                if victorias[eq_grupo[j]] > victorias[eq_grupo[i]]:
+                    eq_grupo[i], eq_grupo[j] = eq_grupo[j], eq_grupo[i]
+
+        for pos, eq in enumerate(eq_grupo):
+            marca = "✅ CLASIFICA" if pos < 2 else "❌"
+            print(f"    {pos+1}. {eq:<22} {victorias[eq]} victorias  {marca}")
+
+        clasificados.append(eq_grupo[0])   # 1° del grupo
+        clasificados.append(eq_grupo[1])   # 2° del grupo
+
+    return clasificados
+
+
+# =============================================================
+# FUNCIÓN 5: Fase eliminatoria (play-offs)
+# Cruza los clasificados: 1°A vs 2°B y 2°A vs 1°B → Final
+# Retorna el nombre del campeón.
+# =============================================================
+def fase_playoffs(clasificados):
+    # clasificados = [1°A, 2°A, 1°B, 2°B]
+    print(f"\n{'='*60}")
+    print("  🟡 SEMIFINALES")
+    print(f"{'='*60}")
+
+    # SF1: 1° Grupo A  vs  2° Grupo B
+    ganador1, pts_a, pts_b = simular_partido(clasificados[0], clasificados[3])
+    print(f"  SF1: {clasificados[0]}  vs  {clasificados[3]}")
+    print(f"       Marcador: {pts_a} - {pts_b}  ✅ Pasa: {ganador1}")
+
+    # SF2: 2° Grupo A  vs  1° Grupo B
+    ganador2, pts_c, pts_d = simular_partido(clasificados[1], clasificados[2])
+    print(f"\n  SF2: {clasificados[1]}  vs  {clasificados[2]}")
+    print(f"       Marcador: {pts_c} - {pts_d}  ✅ Pasa: {ganador2}")
+
+    print(f"\n{'='*60}")
+    print("  🔴 GRAN FINAL")
+    print(f"{'='*60}")
+    campeon, pts_f1, pts_f2 = simular_partido(ganador1, ganador2)
+    print(f"  FINAL: {ganador1}  vs  {ganador2}")
+    print(f"         Marcador: {pts_f1} - {pts_f2}")
+    print(f"  🏆 CAMPEÓN: {campeon}")
+
+    return campeon
+
+
+# =============================================================
+# PROGRAMA PRINCIPAL
+# =============================================================
+
+print("=" * 60)
+print("   🎉  BIENVENIDA NOVATUSS — Sistema de Competencias  🎉")
+print("=" * 60)
+
+# 1. Cargar equipos
+equipos, grupos = cargar_equipos()
+
+print("\n📋 EQUIPOS PARTICIPANTES")
+print("-" * 45)
+grupos_unicos = []
+for g in grupos:
+    if g not in grupos_unicos:
+        grupos_unicos.append(g)
+
+for grupo in grupos_unicos:
+    print(f"\n  {grupo}:")
+    for i in range(len(equipos)):
+        if grupos[i] == grupo:
+            print(f"    • {equipos[i]}")
+
+# 2. Cargar calendario
+partidos = definir_calendario()
+
+print(f"\n\n{'='*60}")
+print("  🔵 FASE DE GRUPOS — Resultados simulados")
+print(f"{'='*60}")
+
+# 3. Simular fase de grupos
+clasificados = fase_grupos(partidos, equipos, grupos)
+
+print(f"\n{'='*60}")
+print("  CLASIFICADOS A PLAY-OFFS:")
+print(f"    🎯 1° Grupo A → {clasificados[0]}")
+print(f"    🎯 2° Grupo A → {clasificados[1]}")
+print(f"    🎯 1° Grupo B → {clasificados[2]}")
+print(f"    🎯 2° Grupo B → {clasificados[3]}")
+print(f"{'='*60}")
+
+# 4. Play-offs
+campeon = fase_playoffs(clasificados)
+
+# 5. Anuncio del ganador
+print()
+print("★" * 58)
+print("★" + " " * 56 + "★")
+print("★" + "  🏆  ¡¡TENEMOS CAMPEÓN EN NOVATUSS!!  🏆  ".center(56) + "★")
+print("★" + " " * 56 + "★")
+print("★" + f"  👑  {campeon}  👑".center(56) + "★")
+print("★" + " " * 56 + "★")
+print("★" + "  ¡Felicitaciones a toda la carrera!".center(56) + "★")
+print("★" + "  ¡Son la nueva leyenda de la USS!  ".center(56) + "★")
+print("★" + " " * 56 + "★")
+print("★" * 58)
