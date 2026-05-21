@@ -1,285 +1,360 @@
+import random
+import os
 
-import random, os
 os.system("CLS")
-# Semilla fija → resultados reproducibles para la presentación.
-# Comenta esta línea si quieres resultados distintos cada vez.
+
+# ============================================================
+# SIMULADOR NOVATUSS 2026
+# Taller de Programación I
+# ============================================================
+
+# Semilla fija para resultados reproducibles
 random.seed(42)
 
 
-# =============================================================
-# FUNCIÓN 1: Cargar equipos
-# Retorna dos listas paralelas:
-#   - lista_equipos : nombre de cada equipo
-#   - lista_grupos  : grupo al que pertenece (A o B)
-# =============================================================
-def cargar_equipos():
-    lista_equipos = [
-        # --- Grupo A ---
-        "ODONTO",
-        "ING INDUSTRIAL 1",
-        "ING MINAS",
-        "DERECHO 1",
-        # --- Grupo B ---
-        "DERECHO 2",
-        "ING INFORMATICA",
-        "ING INDUSTRIAL 2",
-        "SC ACT FISICA",
+# Cargar carreras y facultades
+def cargar_carreras():
+
+    carreras = [
+        {"nombre": "ODONTO", "facultad": "SALUD"},
+        {"nombre": "ENFERMERIA", "facultad": "SALUD"},
+        {"nombre": "ING INDUSTRIAL", "facultad": "INGENIERIA"},
+        {"nombre": "ING INFORMATICA", "facultad": "INGENIERIA"},
+        {"nombre": "DERECHO", "facultad": "CIENCIAS SOCIALES"},
+        {"nombre": "PSICOLOGIA", "facultad": "CIENCIAS SOCIALES"},
     ]
 
-    lista_grupos = [
-        "Grupo A",
-        "Grupo A",
-        "Grupo A",
-        "Grupo A",
-        "Grupo B",
-        "Grupo B",
-        "Grupo B",
-        "Grupo B",
+    return carreras
+
+
+
+# Agregar nueva carrera
+
+def agregar_carrera(carreras):
+
+    print("\n" + "=" * 60) #\n es para dejar el texto abajo y en ésta linea de codigo está haciendo que se impriman 60 "=""
+    print(" AGREGAR NUEVA CARRERA")
+    print("=" * 60)
+
+    nombre = input("Ingrese nombre de la carrera: ").strip().upper()
+
+    while nombre == "":
+        nombre = input("Nombre inválido. Ingrese nuevamente: ").strip().upper()
+
+    # Validar repetidos
+    for carrera in carreras:
+        if carrera["nombre"] == nombre:
+            print("⚠️ Esa carrera ya existe.")
+            return carreras
+
+    facultad = input("Ingrese facultad: ").strip().upper()
+
+    while facultad == "":
+        facultad = input("Facultad inválida. Ingrese nuevamente: ").strip().upper()
+
+    nueva = {
+        "nombre": nombre,
+        "facultad": facultad
+    }
+
+    carreras.append(nueva)
+
+    print(f"\n✅ Carrera {nombre} agregada correctamente.") #windows + "." para poner emojis
+
+    return carreras
+
+
+# Definir eventos
+
+def definir_eventos():
+
+    eventos = [
+        {"evento": "FUTBOL", "puntos": 100},
+        {"evento": "BASQUETBOL", "puntos": 80},
+        {"evento": "VOLEIBOL", "puntos": 60},
+        {"evento": "QUEMADAS", "puntos": 40},
     ]
 
-    return lista_equipos, lista_grupos
+    return eventos
 
 
-# =============================================================
-# FUNCIÓN NUEVA: Agregar una carrera
-# Solicita al usuario el nombre de la nueva carrera y su grupo.
-# Valida que el grupo ingresado sea "A" o "B".
-# Agrega la carrera a las listas existentes y retorna las listas
-# actualizadas.
-#
-# Parámetros:
-#   lista_equipos : lista actual de carreras
-#   lista_grupos  : lista actual de grupos
-#
-# Retorna:
-#   lista_equipos y lista_grupos actualizadas
-# =============================================================
-def agregar_carrera(lista_equipos, lista_grupos):
-    print("\n" + "─" * 50)
-    print("  ➕  AGREGAR NUEVA CARRERA")
-    print("─" * 50)
+# Mostrar eventos
 
-    # Solicitar nombre de la carrera
-    nombre = input("  Ingrese el nombre de la nueva carrera: ").strip().upper()
+def mostrar_eventos(eventos):
 
-    # Validar que no esté repetida
-    if nombre in lista_equipos:
-        print(f"  ⚠️  La carrera '{nombre}' ya existe en la lista. No se agregó.")
-        return lista_equipos, lista_grupos
+    print("\n" + "=" * 60)
+    print("EVENTOS DISPONIBLES")
+    print("=" * 60)
 
-    # Solicitar grupo con validación
-    grupo_valido = False
-    while not grupo_valido:
-        opcion = input("  ¿A qué grupo pertenece? Ingrese A o B: ").strip().upper()
-        if opcion == "A":
-            grupo = "Grupo A"
-            grupo_valido = True
-        elif opcion == "B":
-            grupo = "Grupo B"
-            grupo_valido = True
-        else:
-            print("  ❌ Opción inválida. Debe ingresar 'A' o 'B'.")
-
-    # Agregar a las listas
-    lista_equipos.append(nombre)
-    lista_grupos.append(grupo)
-
-    print(f"\n  ✅ Carrera '{nombre}' agregada al {grupo} exitosamente.")
-    print("─" * 50)
-
-    return lista_equipos, lista_grupos
+    for e in eventos:
+        print(f"• {e['Evento']:<15} → {e['Puntos']} Puntos")
 
 
-# =============================================================
-# FUNCIÓN 2: Definir el calendario de partidos
-# Retorna una lista de diccionarios, uno por partido.
-# =============================================================
-def definir_calendario():
-    partidos = [
-        # ── RONDA 1 ──────────────────────────────────────────
-        {"local": "ODONTO",           "visita": "DERECHO 1",       "fecha": "LUN 20-04", "hora": "14:00", "grupo": "Grupo A", "ronda": 1},
-        {"local": "ING INDUSTRIAL 1", "visita": "ING MINAS",       "fecha": "JUE 30-04", "hora": "13:00", "grupo": "Grupo A", "ronda": 1},
-        {"local": "DERECHO 2",        "visita": "SC ACT FISICA",   "fecha": "MIE 22-04", "hora": "13:00", "grupo": "Grupo B", "ronda": 1},
-        {"local": "ING INFORMATICA",  "visita": "ING INDUSTRIAL 2","fecha": "MAR 21-04", "hora": "14:00", "grupo": "Grupo B", "ronda": 1},
-        # ── RONDA 2 ──────────────────────────────────────────
-        {"local": "ODONTO",           "visita": "ING MINAS",       "fecha": "LUN 27-04", "hora": "14:00", "grupo": "Grupo A", "ronda": 2},
-        {"local": "ING INDUSTRIAL 1", "visita": "DERECHO 1",       "fecha": "VIE 24-04", "hora": "13:00", "grupo": "Grupo A", "ronda": 2},
-        {"local": "DERECHO 2",        "visita": "ING INDUSTRIAL 2","fecha": "JUE 23-04", "hora": "14:00", "grupo": "Grupo B", "ronda": 2},
-        {"local": "ING INFORMATICA",  "visita": "SC ACT FISICA",   "fecha": "MAR 22-04", "hora": "13:00", "grupo": "Grupo B", "ronda": 2},
-        # ── RONDA 3 ──────────────────────────────────────────
-        {"local": "ODONTO",           "visita": "ING INDUSTRIAL 1","fecha": "JUE 23-04", "hora": "13:00", "grupo": "Grupo A", "ronda": 3},
-        {"local": "ING MINAS",        "visita": "DERECHO 1",       "fecha": "MAR 28-04", "hora": "14:00", "grupo": "Grupo A", "ronda": 3},
-        {"local": "DERECHO 2",        "visita": "ING INFORMATICA", "fecha": "MIE 29-04", "hora": "13:00", "grupo": "Grupo B", "ronda": 3},
-        {"local": "ING INDUSTRIAL 2", "visita": "SC ACT FISICA",   "fecha": "JUE 30-04", "hora": "14:00", "grupo": "Grupo B", "ronda": 3},
-    ]
-    return partidos
+
+# Calcular eventos posibles
+
+def calcular_eventos():
+
+    print("\n" + "=" * 60)
+    print("CÁLCULO DE EVENTOS DISPONIBLES")
+    print("=" * 60)
+
+    # Suposiciones
+    horas_dia_completo = 8
+    dias_completos = 3
+
+    horas_media_jornada = 4
+    dias_media_jornada = 2
+
+    horas_mes = 2
+    dias_restantes = 15
+
+    total_horas = (horas_dia_completo * dias_completos + horas_media_jornada * dias_media_jornada + horas_mes * dias_restantes)
+
+    print(f"Horas primera etapa: {horas_dia_completo * dias_completos}")
+    print(f"Horas media jornada: {horas_media_jornada * dias_media_jornada}")
+    print(f"Horas resto del mes: {horas_mes * dias_restantes}")
+
+    print(f"\n Total de horas disponibles: {total_horas}")
+    print(f" Total de eventos posibles: {total_horas}")
+
+    return total_horas
 
 
-# =============================================================
-# FUNCIÓN 3: Simular un partido
-# Genera puntajes aleatorios (1–10). Sin empates.
-# Retorna: (ganador, puntaje_local, puntaje_visita)
-# =============================================================
+# ============================================================
+# FUNCIÓN 6: Crear grupos por facultad
+# ============================================================
+def crear_grupos(carreras):
+
+    grupos = {}
+
+    for carrera in carreras:
+
+        facultad = carrera["facultad"]
+
+        if facultad not in grupos:
+            grupos[facultad] = []
+
+        grupos[facultad].append(carrera["nombre"])
+
+    return grupos
+
+
+# ============================================================
+# FUNCIÓN 7: Simular partido
+# ============================================================
 def simular_partido(local, visita):
-    pts_local  = random.randint(1, 10)
-    pts_visita = random.randint(1, 10)
 
-    while pts_local == pts_visita:
-        pts_local  = random.randint(1, 10)
-        pts_visita = random.randint(1, 10)
+    puntos_local = random.randint(1, 10)
+    puntos_visita = random.randint(1, 10)
 
-    ganador = local if pts_local > pts_visita else visita
-    return ganador, pts_local, pts_visita
+    while puntos_local == puntos_visita:
+
+        puntos_local = random.randint(1, 10)
+        puntos_visita = random.randint(1, 10)
+
+    if puntos_local > puntos_visita:
+        ganador = local
+    else:
+        ganador = visita
+
+    return ganador, puntos_local, puntos_visita
 
 
-# =============================================================
-# FUNCIÓN 4: Fase de grupos
-# =============================================================
-def fase_grupos(partidos, equipos, grupos):
-    victorias = {}
-    for e in equipos:
-        victorias[e] = 0
+# ============================================================
+# FUNCIÓN 8: Fase de grupos
+# ============================================================
+def fase_grupos(grupos):
 
-    ronda_actual = 0
+    print("\n" + "=" * 60)
+    print(" FASE DE GRUPOS")
+    print("=" * 60)
 
-    for p in partidos:
-        if p["ronda"] != ronda_actual:
-            ronda_actual = p["ronda"]
-            print(f"\n{'─'*60}")
-            print(f"  ⚽  RONDA {ronda_actual}")
-            print(f"{'─'*60}")
+    # Variable obligatoria solicitada
+    puntos_estrella_novatuss = {}
 
-        ganador, pts_l, pts_v = simular_partido(p["local"], p["visita"])
-        victorias[ganador] += 1
-
-        print(f"  [{p['grupo']}] {p['local']:<18} {pts_l} - {pts_v}  {p['visita']}")
-        print(f"          📅 {p['fecha']}  🕛 {p['hora']}  ✅ Gana: {ganador}")
-
-    # ── Clasificación por grupo ──────────────────────────────
-    print(f"\n{'='*60}")
-    print("  📊 TABLA FINAL DE GRUPOS")
-    print(f"{'='*60}")
-
-    grupos_unicos = []
-    for g in grupos:
-        if g not in grupos_unicos:
-            grupos_unicos.append(g)
+    # Inicializar puntos
+    for facultad in grupos:
+        for equipo in grupos[facultad]:
+            puntos_estrella_novatuss[equipo] = 0
 
     clasificados = []
 
-    for grupo in grupos_unicos:
-        print(f"\n  {grupo}:")
+    lugares = [
+        "Cancha USS",
+        "Gimnasio Central",
+        "Patio Deportivo",
+        "Multicancha USS"
+    ]
 
-        eq_grupo = []
+    for facultad in grupos:
+
+        print(f"\n FACULTAD: {facultad}")
+        print("-" * 60)
+
+        equipos = grupos[facultad]
+
+        # Todos contra todos
         for i in range(len(equipos)):
-            if grupos[i] == grupo:
-                eq_grupo.append(equipos[i])
 
-        # Ordenar por victorias (burbuja)
-        for i in range(len(eq_grupo) - 1):
-            for j in range(i + 1, len(eq_grupo)):
-                if victorias[eq_grupo[j]] > victorias[eq_grupo[i]]:
-                    eq_grupo[i], eq_grupo[j] = eq_grupo[j], eq_grupo[i]
+            for j in range(i + 1, len(equipos)):
 
-        for pos, eq in enumerate(eq_grupo):
-            marca = "✅ CLASIFICA" if pos < 2 else "❌"
-            print(f"    {pos+1}. {eq:<22} {victorias[eq]} victorias  {marca}")
+                local = equipos[i]
+                visita = equipos[j]
 
-        clasificados.append(eq_grupo[0])
-        clasificados.append(eq_grupo[1])
+                lugar = random.choice(lugares)
 
-    return clasificados
+                ganador, pl, pv = simular_partido(local, visita)
+
+                puntos_estrella_novatuss[ganador] += 3
+
+                print(f"\n Lugar: {lugar}")
+                print(f" {local} vs {visita}")
+                print(f" Resultado: {pl} - {pv}")
+                print(f" Ganador: {ganador}")
+
+        # Ordenar tabla
+        tabla = []
+
+        for equipo in equipos:
+            tabla.append((equipo, puntos_estrella_novatuss[equipo]))
+
+        # Burbuja
+        for i in range(len(tabla)-1):
+            for j in range(i+1, len(tabla)):
+                if tabla[j][1] > tabla[i][1]:
+                    tabla[i], tabla[j] = tabla[j], tabla[i]
+
+        print("\n📋 TABLA FINAL")
+
+        for pos, datos in enumerate(tabla):
+
+            equipo = datos[0]
+            puntos = datos[1]
+
+            if pos < 2:
+                estado = "✅ CLASIFICA"
+                clasificados.append(equipo)
+            else:
+                estado = "❌ FUERA"
+
+            print(f"{pos+1}. {equipo:<20} {puntos} pts {estado}")
+
+    return clasificados, puntos_estrella_novatuss
 
 
-# =============================================================
-# FUNCIÓN 5: Fase eliminatoria (play-offs)
-# =============================================================
-def fase_playoffs(clasificados):
-    print(f"\n{'='*60}")
-    print("  🟡 SEMIFINALES")
-    print(f"{'='*60}")
+# ============================================================
+# FUNCIÓN 9: PLAYOFFS
+# ============================================================
+def playoffs(clasificados):
 
-    ganador1, pts_a, pts_b = simular_partido(clasificados[0], clasificados[3])
-    print(f"  SF1: {clasificados[0]}  vs  {clasificados[3]}")
-    print(f"       Marcador: {pts_a} - {pts_b}  ✅ Pasa: {ganador1}")
+    # Algoritmo de transparencia USS v2.6
 
-    ganador2, pts_c, pts_d = simular_partido(clasificados[1], clasificados[2])
-    print(f"\n  SF2: {clasificados[1]}  vs  {clasificados[2]}")
-    print(f"       Marcador: {pts_c} - {pts_d}  ✅ Pasa: {ganador2}")
+    print("\n" + "=" * 60)
+    print("🏆 PLAYOFFS")
+    print("=" * 60)
 
-    print(f"\n{'='*60}")
-    print("  🔴 GRAN FINAL")
-    print(f"{'='*60}")
-    campeon, pts_f1, pts_f2 = simular_partido(ganador1, ganador2)
-    print(f"  FINAL: {ganador1}  vs  {ganador2}")
-    print(f"         Marcador: {pts_f1} - {pts_f2}")
-    print(f"  🏆 CAMPEÓN: {campeon}")
+    semifinalistas = clasificados[:4]
+
+    # SEMIFINAL 1
+    ganador1, p1, p2 = simular_partido(
+        semifinalistas[0],
+        semifinalistas[3]
+    )
+
+    print(f"\nSEMIFINAL 1")
+    print(f"{semifinalistas[0]} vs {semifinalistas[3]}")
+    print(f"Resultado: {p1} - {p2}")
+    print(f"✅ Clasifica: {ganador1}")
+
+    # SEMIFINAL 2
+    ganador2, p3, p4 = simular_partido(
+        semifinalistas[1],
+        semifinalistas[2]
+    )
+
+    print(f"\nSEMIFINAL 2")
+    print(f"{semifinalistas[1]} vs {semifinalistas[2]}")
+    print(f"Resultado: {p3} - {p4}")
+    print(f"✅ Clasifica: {ganador2}")
+
+    # FINAL
+    campeon, pf1, pf2 = simular_partido(
+        ganador1,
+        ganador2
+    )
+
+    print("\n" + "=" * 60)
+    print("🔥 GRAN FINAL")
+    print("=" * 60)
+
+    print(f"{ganador1} vs {ganador2}")
+    print(f"Resultado Final: {pf1} - {pf2}")
 
     return campeon
 
 
-# =============================================================
+# ============================================================
 # PROGRAMA PRINCIPAL
-# =============================================================
+# ============================================================
 
 print("=" * 60)
-print("   🎉  BIENVENIDA NOVATUSS — Sistema de Competencias  🎉")
+print("🎉🌳 BIENVENIDOS A NOVATUSS 2026 🌳🎉") 
 print("=" * 60)
 
-# 1. Cargar equipos base
-equipos, grupos = cargar_equipos()
+# Cargar carreras
+carreras = cargar_carreras()
 
-# 2. Preguntar si desea agregar una nueva carrera
-print("\n¿Desea agregar una nueva carrera al torneo?")
-respuesta = input("  Ingrese S para sí, o cualquier otra tecla para continuar: ").strip().upper()
+# Agregar carrera
+opcion = input("\n¿Desea agregar una nueva carrera? (S/N): ").strip().upper()
 
-if respuesta == "S":
-    equipos, grupos = agregar_carrera(equipos, grupos)
+if opcion == "S":
+    carreras = agregar_carrera(carreras)
 
-# 3. Mostrar equipos participantes
-print("\n📋 EQUIPOS PARTICIPANTES")
-print("-" * 45)
+# Mostrar carreras
+print("\n" + "=" * 60)
+print("📚 CARRERAS PARTICIPANTES")
+print("=" * 60)
 
-grupos_unicos = []
-for g in grupos:
-    if g not in grupos_unicos:
-        grupos_unicos.append(g)
+for carrera in carreras:
+    print(f"• {carrera['nombre']} → {carrera['facultad']}")
 
-for grupo in grupos_unicos:
-    print(f"\n  {grupo}:")
-    for i in range(len(equipos)):
-        if grupos[i] == grupo:
-            print(f"    • {equipos[i]}")
+# Eventos
+eventos = definir_eventos()
 
-# 4. Calendario y fase de grupos
-partidos = definir_calendario()
+mostrar_eventos(eventos)
 
-print(f"\n\n{'='*60}")
-print("  🔵 FASE DE GRUPOS — Resultados simulados")
-print(f"{'='*60}")
+# Cálculo eventos
+calcular_eventos()
 
-clasificados = fase_grupos(partidos, equipos, grupos)
+# Crear grupos
+grupos = crear_grupos(carreras)
 
-print(f"\n{'='*60}")
-print("  CLASIFICADOS A PLAY-OFFS:")
-print(f"    🎯 1° Grupo A → {clasificados[0]}")
-print(f"    🎯 2° Grupo A → {clasificados[1]}")
-print(f"    🎯 1° Grupo B → {clasificados[2]}")
-print(f"    🎯 2° Grupo B → {clasificados[3]}")
-print(f"{'='*60}")
+# Fase grupos
+clasificados, puntos_estrella_novatuss = fase_grupos(grupos)
 
-# 5. Play-offs
-campeon = fase_playoffs(clasificados)
+# Mostrar clasificados
+print("\n" + "=" * 60)
+print("🎯 CLASIFICADOS")
+print("=" * 60)
 
-# 6. Anuncio del ganador
-print()
-print("★" * 58)
-print("★" + " " * 56 + "★")
-print("★" + "  🏆  ¡¡TENEMOS CAMPEÓN EN NOVATUSS!!  🏆  ".center(56) + "★")
-print("★" + " " * 56 + "★")
-print("★" + f"  👑  {campeon}  👑".center(56) + "★")
-print("★" + " " * 56 + "★")
-print("★" + "  ¡Felicitaciones a toda la carrera!".center(56) + "★")
-print("★" + "  ¡Son la nueva leyenda de la USS!  ".center(56) + "★")
-print("★" + " " * 56 + "★")
-print("★" * 58)
+for equipo in clasificados:
+    print(f"✅ {equipo}")
+
+# Playoffs
+campeon = playoffs(clasificados)
+
+# Mensaje final
+print("\n" + "★" * 60)
+print("★" + " " * 58 + "★")
+print("★" + "🏆 ¡TENEMOS CAMPEÓN NOVATUSS 2026! 🏆".center(58) + "★")
+print("★" + " " * 58 + "★")
+print("★" + f"👑 {campeon} 👑".center(58) + "★")
+print("★" + " " * 58 + "★")
+print("★" + "¡Felicitaciones a la carrera ganadora!".center(58) + "★")
+print("★" + "¡La USS tiene nuevos campeones!".center(58) + "★")
+print("★" + " " * 58 + "★")
+print("★" * 60)
+
+# Código obligatorio
+print("# NovatUSS2026")
